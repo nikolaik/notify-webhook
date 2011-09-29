@@ -122,9 +122,12 @@ def make_json(old, new, ref):
 
 
 def post(url, data):
-    u = urllib2.urlopen(POST_URL, urllib.urlencode({'payload': data}))
-    u.read()
-    u.close()
+    try:
+        u = urllib2.urlopen(POST_URL, urllib.urlencode({'payload': data}))
+        u.read()
+        u.close()
+    except urllib2.HTTPError as error:
+        print "POST to " + POST_URL + " returned error: " + error.code + "."
 
 if __name__ == '__main__':
     for line in sys.stdin.xreadlines():
