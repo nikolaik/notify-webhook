@@ -7,12 +7,15 @@ import subprocess
 from datetime import datetime
 import simplejson as json
 
-
-POST_URL = 'http://example.com'
-REPO_URL = 'http://example.com'
+# TODO: read settings from gitosis, git repo or similar.
+# TODO: move settings to separate file and...
+POST_URL = 'http://127.0.0.1:8080'
+REPO_URL = 'http://git.example.com/?p=notify-webhook.git'
+COMMIT_URL = r'http://git.example.com/?p=notify-webhook.git;a=commit;h=%s'
+COMPARE_URL = r'http://git.example.com/?p=notify-webhook.git;a=commitdiff;hp=%s;h=%s'
 COMMIT_URL = r'http://example.com/commit/%s'
-COMPARE_URL = r'http://exmaple.com/compare/%s..%s'
-REPO_NAME = 'gitrepo'
+COMPARE_URL = r'http://example.com/compare/%s..%s'
+REPO_NAME = 'banan-srv'
 REPO_OWNER_NAME = 'Git U. Some'
 REPO_OWNER_EMAIL = 'git@example.com'
 REPO_DESC = ''
@@ -92,7 +95,7 @@ def make_json(old, new, ref):
         'before': old,
         'after': new,
         'ref': ref,
-        'compare': COMPARE_URL % (old, new),
+        'compare': COMPARE_URL % (old[:6], new[:6]),
         'repository': {
             'url': REPO_URL,
             'name': REPO_NAME,
@@ -123,6 +126,7 @@ def make_json(old, new, ref):
 
 def post(url, data):
     try:
+        # FIXME: plenty more exceptions could happend here
         u = urllib2.urlopen(POST_URL, urllib.urlencode({'payload': data}))
         u.read()
         u.close()
